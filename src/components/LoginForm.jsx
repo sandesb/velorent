@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import * as Form from "@radix-ui/react-form";
 import { Text, Flex, Switch } from "@radix-ui/themes";
+import { useLocation } from "react-router-dom";
 
 const LoginForm = () => {
   const [isVendor, setIsVendor] = useState(false); // State for toggle
+  const location = useLocation(); // Hook to get the current URL path
+
+  // Check if the current path is "/admin"
+  const isAdminPath = location.pathname === "/admin";
 
   return (
     <Form.Root className="w-[260px] mb-52">
@@ -59,17 +64,19 @@ const LoginForm = () => {
         </Form.Control>
       </Form.Field>
 
-       {/* Toggle Vendor/Customer */}
-       <Text as="label" size="3" className="text-gray-900 mb-4">
-        <Flex gap="2" align="center">
-          <Switch
-            size="2"
-            defaultChecked={isVendor}
-            onCheckedChange={(checked) => setIsVendor(checked)}
-          />
-          {isVendor ? "Vendor" : "Customer"}
-        </Flex>
-      </Text>
+          {/* Conditionally render the Switch button */}
+          {!isAdminPath && (
+        <Text as="label" size="3" className="text-gray-900 mb-4">
+          <Flex gap="2" align="center">
+            <Switch
+              size="2"
+              defaultChecked={isVendor}
+              onCheckedChange={(checked) => setIsVendor(checked)}
+            />
+            {isVendor ? "Vendor" : "Customer"}
+          </Flex>
+        </Text>
+      )}
 
       {/* Submit Button */}
       <Form.Submit asChild>
