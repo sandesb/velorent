@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import * as Form from "@radix-ui/react-form";
 import { Text, Flex, Switch } from "@radix-ui/themes";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 
 const LoginForm = () => {
   const [isVendor, setIsVendor] = useState(false); // State for toggle
   const location = useLocation(); // Hook to get the current URL path
+  const navigate = useNavigate(); // Hook to navigate after form submission
 
   // Check if the current path is "/admin"
   const isAdminPath = location.pathname === "/admin";
 
-  return (
-    <Form.Root className="w-[260px] mb-52">
-     
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission
+    const loginType = isVendor ? "Vendor" : "Customer";
+    localStorage.setItem("loginType", loginType); // Store loginType in localStorage
 
+    // Navigate to the appropriate path based on login type
+    if (isVendor) {
+      navigate("/vendor");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  return (
+    <Form.Root className="w-[260px] mb-52" onSubmit={handleSubmit}>
       {/* Email Field */}
       <Form.Field className="mb-2.5 grid" name="email">
         <div className="flex items-baseline justify-between">
@@ -64,8 +76,8 @@ const LoginForm = () => {
         </Form.Control>
       </Form.Field>
 
-          {/* Conditionally render the Switch button */}
-          {!isAdminPath && (
+      {/* Conditionally render the Switch button */}
+      {!isAdminPath && (
         <Text as="label" size="3" className="text-gray-900 mb-4">
           <Flex gap="2" align="center">
             <Switch
@@ -80,7 +92,10 @@ const LoginForm = () => {
 
       {/* Submit Button */}
       <Form.Submit asChild>
-        <button className="mt-2.5 box-border inline-flex h-[35px] w-full items-center justify-center rounded bg-mauve8 px-[15px] font-medium leading-none text-black shadow-[0_2px_10px] shadow-blackA4 hover:bg-mauve1 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">
+        <button
+          className="mt-2.5 box-border text-gray-50 inline-flex h-[35px] w-full items-center justify-center rounded bg-mauve8 px-[15px] font-medium leading-none  shadow-[0_2px_10px] shadow-blackA4 hover:bg-blue-400 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none"
+          type="submit"
+        >
           Log In
         </button>
       </Form.Submit>

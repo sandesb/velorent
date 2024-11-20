@@ -11,12 +11,12 @@ const Layout = () => {
       <Header />
       {/* Sidebar and Main Content */}
       <div className="flex flex-1">
-        <Sidebar className="w-64" />
-        <main className="flex-1 p-6 bg-gray-100">
+        <Sidebar className="w-64 rounded-2xl" />
+        <main className="flex-1 p-6 bg-gray-50 rounded-2xl">
           <Outlet />
         </main>
       </div>
-      <Footer/>
+      <Footer className="rounded-2xl" />
 
     </div>
   );

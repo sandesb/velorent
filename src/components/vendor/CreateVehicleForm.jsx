@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import * as RadioGroup from "@radix-ui/react-radio-group";
+import { useDropzone } from "react-dropzone";
+
 
 const CreateVehicleForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -11,6 +13,21 @@ const CreateVehicleForm = () => {
     rate_per_day: "",
     availability_status: "Available",
   });
+
+  const [qrCode, setQrCode] = useState(null);
+
+const onDrop = (acceptedFiles) => {
+  const file = acceptedFiles[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    setQrCode(reader.result);
+  };
+  reader.readAsDataURL(file);
+};
+const { getRootProps, getInputProps } = useDropzone({
+  onDrop,
+  accept: "image/*",
+});
 
   const handleNext = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -37,15 +54,15 @@ const CreateVehicleForm = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Create New Vehicle</h2>
+    <div className="w-full max-w-1xl mx-auto p-4">
+      <h2 className="text-xl font-bold mb-4">Rent New Vehicle</h2>
       <div className="flex justify-between items-center mb-4">
         {["General Info", "Rate Details", "Availability"].map((step, index) => (
           <div
             key={index}
             className={`flex-1 text-center px-2 py-1 ${
               currentStep === index + 1
-                ? "border-b-2 border-purple-600 font-semibold"
+                ? "border-b-2 border-blue-400 font-semibold"
                 : "text-gray-500"
             }`}
           >
@@ -94,7 +111,7 @@ const CreateVehicleForm = () => {
                   <RadioGroup.Item
                     value={type}
                     className={`w-4 h-4 border rounded-full ${
-                      formData.type === type ? "bg-purple-600" : ""
+                      formData.type === type ? "bg-blue-400" : ""
                     }`}
                   />
                   {type}
@@ -105,7 +122,7 @@ const CreateVehicleForm = () => {
                   value="custom"
                   className={`w-4 h-4 border rounded-full ${
                     formData.type === "" && formData.newType !== ""
-                      ? "bg-purple-600"
+                      ? "bg-blue-400"
                       : ""
                   }`}
                 />
@@ -149,34 +166,62 @@ const CreateVehicleForm = () => {
         </div>
       )}
 
-      {currentStep === 3 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Step 3: Availability</h3>
-          <label className="block text-sm mb-1">Availability Status</label>
-          <RadioGroup.Root
-            className="flex flex-col gap-2"
-            value={formData.availability_status}
-            onValueChange={(value) =>
-              handleRadioChange("availability_status", value)
-            }
-          >
-            {["Available", "Booked", "Maintenance"].map((status) => (
-              <label
-                key={status}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <RadioGroup.Item
-                  value={status}
-                  className={`w-4 h-4 border rounded-full ${
-                    formData.availability_status === status ? "bg-purple-600" : ""
-                  }`}
-                />
-                {status}
-              </label>
-            ))}
-          </RadioGroup.Root>
+{currentStep === 3 && (
+  <div>
+    <h3 className="text-lg font-semibold mb-2">Step 3: Availability</h3>
+    <label className="block text-sm mb-1">Availability Status</label>
+    <RadioGroup.Root
+      className="flex flex-col gap-2"
+      value={formData.availability_status}
+      onValueChange={(value) =>
+        handleRadioChange("availability_status", value)
+      }
+    >
+      {["Available", "Booked", "Maintenance"].map((status) => (
+        <label
+          key={status}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <RadioGroup.Item
+            value={status}
+            className={`w-4 h-4 border rounded-full ${
+              formData.availability_status === status ? "bg-blue-400" : ""
+            }`}
+          />
+          {status}
+        </label>
+      ))}
+    </RadioGroup.Root>
+
+    {/* Dropzone for QR Code Upload */}
+    <div className="mt-4">
+      <label className="block text-sm mb-2 font-semibold">
+        Final Step: Upload QR Code to receive your Payment
+      </label>
+      <div
+        {...getRootProps({
+          className:
+            "border-2 border-dashed border-gray-300 p-4 rounded-md cursor-pointer",
+        })}
+      >
+        <input {...getInputProps()} />
+        <p className="text-sm text-gray-600">
+          Drag and drop an image here, or click to select one
+        </p>
+      </div>
+      {qrCode && (
+        <div className="mt-4">
+          <img
+            src={qrCode}
+            alt="QR Code Preview"
+            className="max-w-full h-auto border rounded-md"
+          />
         </div>
       )}
+    </div>
+  </div>
+)}
+
 
       <div className="mt-4 flex justify-between">
         {currentStep > 1 && (
@@ -190,7 +235,7 @@ const CreateVehicleForm = () => {
         {currentStep < 3 ? (
           <button
             onClick={handleNext}
-            className="px-4 py-2 bg-purple-600 text-white rounded"
+            className="px-4 py-2 bg-blue-400 text-white rounded"
           >
             Next
           </button>

@@ -15,7 +15,7 @@ const Footer = () => {
         <div>
           <div className="flex items-center space-x-2 mb-4">
             <CarIcon className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold">VehicleRent</span>
+            <span className="text-xl font-bold">VeloRenta</span>
           </div>
           <p className="text-gray-600">
             Making vehicle rental easy and accessible for everyone.

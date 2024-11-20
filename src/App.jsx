@@ -11,6 +11,7 @@ import Layout from './theme/Layout';
 import Vehicles from './pages/customer/Vehicles';
 import Profile from './pages/customer/Profile';
 import BookTable from './components/customer/BookTable';
+import Payment from './pages/Payment';
 function App() {
   return (
     <Router>
@@ -28,9 +29,17 @@ function App() {
           <Route path="vehicles" element={<Vehicles />} />
           <Route path="profile" element={<Profile />} />
           <Route path="bookings" element={<BookTable />} />
+          <Route path="payment" element={<Payment />} />
+        </Route>
+
+        <Route path="/vendor" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="vehicles" element={<CreateVehicleForm />} />
+          <Route path="bookings" element={<BookTable/>} />
+          <Route path="profile" element={<Profile />} />
 
 
-          {/* <Route path="bookings" element={<Bookings />} /> */}
+       
         </Route>
       </Routes>
     </Router>

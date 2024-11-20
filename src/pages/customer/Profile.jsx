@@ -10,7 +10,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-gray-50 p-6 rounded-lg shadow-md">
+    <div className="max-w-3xl mx-auto  p-6 rounded-lg ">
       {/* Profile Picture */}
       <div className="flex justify-center mb-6">
         <div className="relative">

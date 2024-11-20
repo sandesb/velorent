@@ -1,18 +1,19 @@
 import React from "react";
-import { CarIcon } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { BellIcon } from "lucide-react"; // Import BellIcon for notifications
+import { useNavigate } from "react-router-dom";
+import Logo from "../assets/logo.png"; // Import the logo from the assets folder
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current URL path
+  const isLoggedIn = Boolean(localStorage.getItem("loginType")); // Check if 'loginType' exists in localStorage
 
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo Section */}
         <div className="flex items-center space-x-2">
-          <CarIcon className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold">VehicleRent</span>
+          <img src={Logo} alt="VeloRenta Logo" className="h-16 w-16" />
+          <span className="text-xl font-bold text-blue-400">VeloRenta</span>
         </div>
 
         {/* Navigation Links */}
@@ -32,18 +33,27 @@ const Header = () => {
         </nav>
 
         {/* Conditional Buttons */}
-        <div className="flex space-x-4">
-          {location.pathname.startsWith("/dashboard") ? (
-            <button
-              className="px-4 py-2 rounded-md text-red-600 border border-red-600"
-              onClick={() => {
-                // Perform log out logic (e.g., clearing tokens)
-                console.log("Logged out");
-                navigate("/"); // Redirect to home or login page
-              }}
-            >
-              Log Out
-            </button>
+        <div className="flex space-x-4 items-center">
+          {isLoggedIn ? (
+            <>
+              {/* Notification Icon */}
+              <BellIcon
+                className="h-6 w-6 text-gray-600 hover:text-gray-900 cursor-pointer"
+                onClick={() => console.log("Notification clicked")}
+              />
+              {/* Log Out Button */}
+              <button
+                className="px-4 py-2 rounded-md text-red-600 border border-red-600"
+                onClick={() => {
+                  // Clear the loginType key from localStorage
+                  localStorage.removeItem("loginType");
+                  console.log("Logged out");
+                  navigate("/"); // Redirect to home or login page
+                }}
+              >
+                Log Out
+              </button>
+            </>
           ) : (
             <>
               <button
@@ -67,3 +77,4 @@ const Header = () => {
 };
 
 export default Header;
+``

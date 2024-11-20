@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CrossIcon, CreditCardIcon } from "lucide-react";
 
@@ -7,6 +8,7 @@ const BookDialog = ({ vehicle }) => {
   const [number, setNumber] = useState(1);
   const [location, setLocation] = useState("");
   const [rent, setRent] = useState(null);
+  const navigate = useNavigate();
 
   const calculateRent = () => {
     const multiplier = durationType === "Days" ? 1 : 7;
@@ -14,6 +16,14 @@ const BookDialog = ({ vehicle }) => {
     setRent(totalRent);
   };
 
+  const proceedToPayment = () => {
+    if (rent !== null) {
+      // Navigate to the Payment page with state
+      navigate("/dashboard/payment", { state: { totalRent: rent.toFixed(2) } });
+    } else {
+      alert("Please calculate the rent before proceeding to payment!");
+    }
+  };
 
   return (
     <Dialog.Root>
@@ -76,7 +86,10 @@ const BookDialog = ({ vehicle }) => {
                 Total Rent: ${rent.toFixed(2)}
               </div>
               <div className="flex justify-center mb-4">
-                <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md">
+                <button
+                  onClick={proceedToPayment}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md"
+                >
                   <CreditCardIcon className="w-5 h-5" />
                   Proceed to Payment
                 </button>
@@ -108,5 +121,4 @@ const BookDialog = ({ vehicle }) => {
   );
 };
 
-  
 export default BookDialog;

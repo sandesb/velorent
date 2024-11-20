@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FilterBox from "../../components/customer/FilterBox";
-import BookDialog from "../../components/customer/BookDialog";
+import BookCard from "../../components/customer/BookCard";
 const vehicles = [
   {
     id: 1,
@@ -51,7 +51,7 @@ const Vehicles = () => {
   };
 
   return (
-    <div className="flex gap-4 p-4 bg-gray-100">
+    <div className="flex gap-4 p-4 ">
       <div className="w-64">
         <FilterBox onFilter={handleFilter} />
       </div>
@@ -59,25 +59,7 @@ const Vehicles = () => {
         <h2 className="text-3xl font-bold mb-6">Featured Vehicles</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredVehicles.map((vehicle) => (
-            <div
-              key={vehicle.id}
-              className="border rounded-lg overflow-hidden shadow-md bg-white"
-            >
-              <img
-                src={vehicle.image}
-                alt={vehicle.name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2">{vehicle.name}</h3>
-                <p className="text-gray-600 mb-2">${vehicle.price}/day</p>
-                <p className="text-sm text-gray-500 mb-2">
-                  Availability: {vehicle.availability}
-                </p>
-                <p className="text-sm text-gray-500 mb-4">Vendor: {vehicle.vendor}</p>
-                <BookDialog vehicle={vehicle} />
-              </div>
-            </div>
+            <BookCard key={vehicle.id} vehicle={vehicle} />
           ))}
         </div>
       </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Table, DataList, Link, Badge, Flex, Code } from "@radix-ui/themes";
+import { Table } from "@radix-ui/themes";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CrossIcon } from "lucide-react";
+import BookList from "../BookList";
 
 const bookings = [
   {
@@ -12,6 +13,9 @@ const bookings = [
     durationType: "Days",
     pickupLocation: "New York",
     totalRent: 495,
+    vendor: "Vendor A",
+    customer: "Customer X",
+    date: "2024-11-20",
   },
   {
     id: 2,
@@ -21,11 +25,30 @@ const bookings = [
     durationType: "Weeks",
     pickupLocation: "Los Angeles",
     totalRent: 1029,
+    vendor: "Vendor B",
+    customer: "Customer Y",
+    date: "2024-11-21",
   },
+];
+
+// Headers for the table, adjusted dynamically
+const staticHeaders = [
+  "S.N",
+  "Vehicle Name",
+  "Price/Day",
+  "Duration",
+  "Pick-up",
+  "Date",
 ];
 
 const BookTable = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // Check the `isLogin` key in localStorage
+  const loginType = localStorage.getItem("loginType") || "customer";
+
+  // Determine whether to show 'Vendor' or 'Customer' in the column header
+  const dynamicHeader = loginType === "Vendor" ? "Vendor" : "Customer";
 
   const handleRowClick = (booking) => {
     setSelectedBooking(booking);
@@ -36,26 +59,31 @@ const BookTable = () => {
       <Table.Root className="w-full border border-gray-300 rounded-md shadow-md">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Vehicle Name</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Price/Day</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Duration</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Pick-up</Table.ColumnHeaderCell>
+            {staticHeaders.map((header, index) => (
+              <Table.ColumnHeaderCell key={index}>{header}</Table.ColumnHeaderCell>
+            ))}
+            <Table.ColumnHeaderCell>{dynamicHeader}</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {bookings.map((booking) => (
+          {bookings.map((booking, index) => (
             <Table.Row
               key={booking.id}
               className="hover:bg-gray-50 cursor-pointer"
               onClick={() => handleRowClick(booking)}
             >
-              <Table.RowHeaderCell>{booking.vehicleName}</Table.RowHeaderCell>
+              <Table.RowHeaderCell>{index + 1}</Table.RowHeaderCell>
+              <Table.Cell>{booking.vehicleName}</Table.Cell>
               <Table.Cell>${booking.pricePerDay}</Table.Cell>
               <Table.Cell>
                 {booking.duration} {booking.durationType}
               </Table.Cell>
               <Table.Cell>{booking.pickupLocation}</Table.Cell>
+              <Table.Cell>{booking.date}</Table.Cell>
+              <Table.Cell>
+                {loginType === "vendor" ? booking.vendor : booking.customer}
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
@@ -73,33 +101,7 @@ const BookTable = () => {
                 Booking Details
               </Dialog.Title>
 
-              {/* DataList for Additional Info */}
-              <DataList.Root>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Vehicle</DataList.Label>
-                  <DataList.Value>{selectedBooking.vehicleName}</DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Price/Day</DataList.Label>
-                  <DataList.Value>${selectedBooking.pricePerDay}</DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Duration</DataList.Label>
-                  <DataList.Value>
-                    {selectedBooking.duration} {selectedBooking.durationType}
-                  </DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">
-                    Pick-Up
-                  </DataList.Label>
-                  <DataList.Value>{selectedBooking.pickupLocation}</DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Total Rent</DataList.Label>
-                  <DataList.Value>${selectedBooking.totalRent}</DataList.Value>
-                </DataList.Item>
-              </DataList.Root>
+              <BookList booking={selectedBooking} />
 
               <Dialog.Close asChild>
                 <button

@@ -34,9 +34,9 @@ const DisplayVehicles = () => {
   return (
     <div className="mb-16">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold">Your Vehicles</h2>
+        <h2 className="text-3xl font-bold text-blue-400">Your Vehicles</h2>
         <button
-          className="py-2 px-4 bg-blue-600 text-white rounded-md"
+          className="py-2 px-4 bg-blue-400 text-white rounded-md"
           onClick={() => setIsGridView(!isGridView)}
         >
           {isGridView ? "Switch to List View" : "Switch to Grid View"}
