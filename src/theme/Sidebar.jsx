@@ -3,8 +3,9 @@ import { NavLink } from "react-router-dom";
 import { CarIcon, ClockIcon, CreditCardIcon, UserIcon } from "lucide-react";
 
 const Sidebar = () => {
-  // Retrieve the loginType from localStorage
+  // Retrieve user details from localStorage
   const loginType = localStorage.getItem("loginType");
+  const fullName = localStorage.getItem("fullName"); // Get full_name
 
   // Determine the base path based on loginType
   const basePath = loginType === "Vendor" ? "/vendor" : "/dashboard";
@@ -24,9 +25,7 @@ const Sidebar = () => {
   return (
     <aside className="w-64 p-4 h-screen">
       {/* Dynamic Header */}
-      <h2 className="text-xl font-bold mb-4">
-        Welcome {loginType === "Vendor" ? "Vendor" : "Customer"}
-      </h2>
+      <h2 className="text-xl font-bold mb-4">Welcome, {fullName || loginType}</h2>
 
       <nav>
         <ul className="space-y-2">

@@ -42,28 +42,33 @@ const createUser = async (req, res) => {
 // Controller to handle login
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body; // Include role
 
     // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+    if (!email || !password || typeof role !== "boolean") {
+      return res.status(400).json({ message: "Email, password, and role are required." });
     }
 
     // Fetch user by email
     const user = await getUserByEmail(email);
     if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Validate role
+    if (user.role !== role) {
+      return res.status(403).json({ message: "Role mismatch." });
     }
 
     // Compare passwords
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(401).json({ message: 'Invalid credentials.' });
+      return res.status(401).json({ message: "Invalid credentials." });
     }
 
     // Login successful
     res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       user: {
         id: user.id,
         full_name: user.full_name,
@@ -74,10 +79,11 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error logging in user:', error.message);
-    res.status(500).json({ message: 'Error logging in', error: error.message });
+    console.error("Error logging in user:", error.message);
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
+
 
 // Controller to update a user
 const updateUserById = async (req, res) => {

@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors'); // Import cors package
 require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes'); // Import user routes
@@ -8,7 +9,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-
+app.use(cors({
+  origin: "http://localhost:5173", // Frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 // Routes
 app.use('/api', userRoutes);
 

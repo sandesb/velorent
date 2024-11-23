@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { LockIcon, EyeIcon, EyeOffIcon, XIcon } from "lucide-react";
+import usersApi from "../../services/usersApi";
 
 const ChangePasswordPopover = () => {
   const [showPassword, setShowPassword] = useState({
@@ -8,12 +9,49 @@ const ChangePasswordPopover = () => {
     newPassword: false,
     confirmPassword: false,
   });
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
 
   const togglePasswordVisibility = (field) => {
     setShowPassword((prevState) => ({
       ...prevState,
       [field]: !prevState[field],
     }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData({ ...passwordData, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    const { oldPassword, newPassword, confirmPassword } = passwordData;
+
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const userId = localStorage.getItem("userId"); // Ensure user ID is stored during login
+      if (!userId) throw new Error("User ID not found in localStorage");
+
+      // Use the `updateUser` API method for updating the password
+      const userData = { oldPassword, newPassword }; // Construct the data object
+      await usersApi.updateUser(userId, userData);
+
+      alert("Password updated successfully!");
+    } catch (error) {
+      console.error("Error updating password:", error.message);
+      alert(error.response?.data?.message || "Failed to update password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,6 +82,9 @@ const ChangePasswordPopover = () => {
               <input
                 type={showPassword.oldPassword ? "text" : "password"}
                 id="oldPassword"
+                name="oldPassword"
+                value={passwordData.oldPassword}
+                onChange={handleInputChange}
                 placeholder="Enter old password"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -68,6 +109,9 @@ const ChangePasswordPopover = () => {
               <input
                 type={showPassword.newPassword ? "text" : "password"}
                 id="newPassword"
+                name="newPassword"
+                value={passwordData.newPassword}
+                onChange={handleInputChange}
                 placeholder="Enter new password"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -95,6 +139,9 @@ const ChangePasswordPopover = () => {
               <input
                 type={showPassword.confirmPassword ? "text" : "password"}
                 id="confirmPassword"
+                name="confirmPassword"
+                value={passwordData.confirmPassword}
+                onChange={handleInputChange}
                 placeholder="Re-enter new password"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -114,8 +161,16 @@ const ChangePasswordPopover = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end mt-4">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700">
-              Submit
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`px-4 py-2 rounded-md shadow-md ${
+                loading
+                  ? "bg-gray-400 text-white cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+            >
+              {loading ? "Updating..." : "Submit"}
             </button>
           </div>
 

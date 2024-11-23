@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Form from "@radix-ui/react-form";
 import AlertPopup from "./AlertPopup";
+import usersApi from "../services/usersApi";
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    full_name: "",
     email: "",
     password: "",
     number: "",
     address: "",
   });
   const [showDialog, setShowDialog] = useState(false); // Toggle AlertDialog
+  const [userData, setUserData] = useState(null); // Store user data to send
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -22,31 +24,66 @@ const SignUpForm = () => {
     setShowDialog(true); // Open the AlertDialog
   };
 
-  const handleRoleSelect = (role) => {
-    const userData = { ...formData, role }; // Bundle form data with selected role
-    console.log("Final User Data:", userData); // Log the final data
-    setShowDialog(false); // Close the dialog
-    navigate("/login"); // Redirect to login page
+  // Function to convert "customer" and "vendor" to boolean
+  const roleToBoolean = (role) => {
+    if (role === "Customer") return false;
+    if (role === "Vendor") return true;
+    throw new Error("Invalid role provided!"); // Error for unexpected values
   };
+
+  const handleRoleSelect = (role) => {
+    try {
+      const userData = {
+        full_name: formData.full_name,
+        email: formData.email,
+        password: formData.password,
+        number: formData.number,
+        address: formData.address,
+        role: roleToBoolean(role), // Convert role to boolean
+      };
+      console.log("User Data to be Sent:", userData);
+      setUserData(userData);
+      setShowDialog(false);
+    } catch (error) {
+      console.error("Error converting role:", error.message);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (userData) {
+      (async () => {
+        try {
+          const response = await usersApi.signUp(userData);
+          console.log("User signed up successfully:", response);
+          navigate("/login"); // Redirect to login page on success
+        } catch (error) {
+          console.error("Sign-up failed:", error);
+        }
+      })();
+    }
+  }, [userData, navigate]);
 
   return (
     <div className="w-[300px] mx-auto">
       <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
       <Form.Root onSubmit={handleSubmit}>
         {/* Full Name Field */}
-        <Form.Field className="mb-4" name="fullName">
-          <Form.Label className="block text-sm font-medium">Full Name</Form.Label>
-          <Form.Control asChild>
-            <input
-              className="w-full px-3 py-2 border rounded-md"
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              required
-            />
-          </Form.Control>
-        </Form.Field>
+    {/* Full Name Field */}
+<Form.Field className="mb-4" name="full_name">
+  <Form.Label className="block text-sm font-medium">Full Name</Form.Label>
+  <Form.Control asChild>
+    <input
+      className="w-full px-3 py-2 border rounded-md"
+      type="text"
+      name="full_name" // Change from fullName to full_name
+      value={formData.full_name} // Access full_name from formData
+      onChange={handleInputChange}
+      required
+    />
+  </Form.Control>
+</Form.Field>
+
 
         {/* Email Field */}
         <Form.Field className="mb-4" name="email">
