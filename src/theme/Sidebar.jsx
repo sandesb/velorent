@@ -4,18 +4,18 @@ import { CarIcon, ClockIcon, CreditCardIcon, UserIcon } from "lucide-react";
 
 const Sidebar = () => {
   // Retrieve user details from localStorage
-  const loginType = localStorage.getItem("loginType");
-  const fullName = localStorage.getItem("fullName"); // Get full_name
+  const role = localStorage.getItem("role"); // "Vendor" or "Customer"
+  const fullName = localStorage.getItem("fullName"); // User's full name
 
-  // Determine the base path based on loginType
-  const basePath = loginType === "Vendor" ? "/vendor" : "/dashboard";
+  // Determine the base path based on role
+  const basePath = role === "Vendor" ? "/vendor" : "/dashboard";
 
   // Sidebar navigation links
   const navLinks = [
     { path: `${basePath}`, label: "Home", icon: CarIcon },
     {
       path: `${basePath}/vehicles`,
-      label: loginType === "Vendor" ? "Rent" : "Vehicles", // Conditional label
+      label: role === "Vendor" ? "Rent" : "Vehicles", // Conditional label
       icon: ClockIcon,
     },
     { path: `${basePath}/bookings`, label: "Bookings", icon: CreditCardIcon },
@@ -23,9 +23,11 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 p-4 h-screen">
+    <aside className="w-64 p-4 h-screen ">
       {/* Dynamic Header */}
-      <h2 className="text-xl font-bold mb-4">Welcome, {fullName || loginType}</h2>
+      <h2 className="text-xl font-bold mb-4">
+        Welcome, {fullName || (role === "Vendor" ? "Vendor" : "Customer")}
+      </h2>
 
       <nav>
         <ul className="space-y-2">

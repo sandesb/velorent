@@ -33,21 +33,18 @@ const SignUpForm = () => {
 
   const handleRoleSelect = (role) => {
     try {
-      const userData = {
-        full_name: formData.full_name,
-        email: formData.email,
-        password: formData.password,
-        number: formData.number,
-        address: formData.address,
-        role: roleToBoolean(role), // Convert role to boolean
-      };
-      console.log("User Data to be Sent:", userData);
-      setUserData(userData);
+      const roleBoolean = roleToBoolean(role);
+      localStorage.setItem("role", role); // Save role as Customer/Vendor
+      setUserData({
+        ...formData,
+        role: roleBoolean,
+      });
       setShowDialog(false);
     } catch (error) {
       console.error("Error converting role:", error.message);
     }
   };
+  
   
 
   useEffect(() => {

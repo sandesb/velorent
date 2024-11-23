@@ -1,8 +1,15 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Flex } from "@radix-ui/themes";
 import LoginForm from "../components/LoginForm";
 
 const Login = () => {
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const savedRole = localStorage.getItem("role");
+    setRole(savedRole); // 'Customer' or 'Vendor'
+  }, []);
+
   return (
     <Flex
       height="100vh"
@@ -24,10 +31,10 @@ const Login = () => {
           className="text-3xl font-bold text-gray-900 mb-4"
           style={{ marginTop: "200px" }}
         >
-          Welcome Back
-        </h1>
+          {role === "Vendor" ? "Vendor Login" : "Customer Login"}
+          </h1>
         <p className="text-gray-600 ">
-          Log in to your Vehicle Rental account.
+        Log in to your {role || "Vehicle Rental"} account.
         </p>
 
         <div className="flex items-center w-full max-w-xs my-4">
@@ -39,7 +46,7 @@ const Login = () => {
         <LoginForm />
       </Flex>
 
-      {/* Right Section */}
+     {/* Right Section */}
       <Flex
         direction="column"
         align="center"
@@ -47,7 +54,10 @@ const Login = () => {
         width={{ initial: "100%", sm: "50%" }}
         padding="4"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1619767886558-efdc259cde1a')",
+          backgroundImage:
+            role === "Vendor"
+              ? "url('https://images.unsplash.com/photo-1619767886558-efdc259cde1a')"
+              : "url('https://pikwizard.com/pw/medium/0ddb8b73e8125f175858e8dec81eadfe.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           color: "white",

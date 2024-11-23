@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Form from "@radix-ui/react-form";
 import { Text, Flex, Switch } from "@radix-ui/themes";
 import { useLocation, useNavigate } from "react-router-dom";
 import usersApi from "../services/usersApi";
 
 const LoginForm = () => {
-  const [isVendor, setIsVendor] = useState(null); // Changed default to null for validation
+  const [isVendor, setIsVendor] = useState(null); // Vendor state: true/false/null
   const [formData, setFormData] = useState({ email: "", password: "" });
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdminPath = location.pathname === "/admin";
+
+  // Detect role from localStorage on component mount
+  useEffect(() => {
+    const savedRole = localStorage.getItem("role");
+    if (savedRole === "Vendor") {
+      setIsVendor(true); // Vendor is true
+    } else if (savedRole === "Customer") {
+      setIsVendor(false); // Customer is false
+    } else {
+      setIsVendor(null); // No role found
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,12 +30,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (isVendor === null) {
       alert("Please select Vendor or Customer.");
       return;
     }
-  
+
     try {
       const response = await usersApi.login(
         formData.email,
@@ -31,18 +43,15 @@ const LoginForm = () => {
         isVendor // Pass boolean role
       );
       console.log("Login successful:", response);
-  
-      const { id,full_name, email } = response.user;
-      
-  
+
+      const { id, full_name, email } = response.user;
+
       // Store user details in localStorage
-      localStorage.setItem("loginType", isVendor ? "Vendor" : "Customer");
+      localStorage.setItem("role", isVendor ? "Vendor" : "Customer");
       localStorage.setItem("fullName", full_name);
       localStorage.setItem("userId", id);
+      localStorage.setItem("email", email);
 
-      localStorage.setItem("email", email); // Store full_name
-       // Store full_name
-  
       // Navigate to the appropriate dashboard
       if (isVendor) {
         navigate("/vendor");
@@ -54,7 +63,6 @@ const LoginForm = () => {
       alert(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
-  
 
   return (
     <Form.Root className="w-[260px] mb-52" onSubmit={handleSubmit}>
@@ -117,10 +125,18 @@ const LoginForm = () => {
           <Flex gap="2" align="center">
             <Switch
               size="2"
-              checked={isVendor === null ? false : isVendor}
+              checked={isVendor !== null ? isVendor : false}
               onCheckedChange={(checked) => setIsVendor(checked)}
+              style={{
+                borderRadius: "300px",
+                backgroundColor: isVendor === null ? "" : isVendor ? "black" : "purple",
+              }}
             />
-            {isVendor === null ? "Please select" : isVendor ? "Vendor" : "Customer"}
+            {isVendor === null
+              ? "Please Select"
+              : isVendor
+              ? "Vendor"
+              : "Customer"}
           </Flex>
         </Text>
       )}

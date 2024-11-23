@@ -5,7 +5,7 @@ import Logo from "../assets/logo.png"; // Import the logo from the assets folder
 
 const Header = () => {
   const navigate = useNavigate();
-  const isLoggedIn = Boolean(localStorage.getItem("loginType")); // Check if 'loginType' exists in localStorage
+  const isLoggedIn = Boolean(localStorage.getItem("role")); // Check if 'role' exists in localStorage
 
   return (
     <header className="bg-white shadow-sm">
@@ -45,8 +45,8 @@ const Header = () => {
               <button
                 className="px-4 py-2 rounded-md text-red-600 border border-red-600"
                 onClick={() => {
-                  // Clear the loginType key from localStorage
-                  localStorage.removeItem("loginType");
+                  // Clear the role key from localStorage
+                  localStorage.removeItem("role");
                   console.log("Logged out");
                   navigate("/"); // Redirect to home or login page
                 }}

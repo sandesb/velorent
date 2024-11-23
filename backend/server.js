@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes'); // Import user routes
 require('./db'); // Import and initialize database connection
+const vehicleRoutes = require('./routes/vehicleRoutes');
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.use(cors({
 }));
 // Routes
 app.use('/api', userRoutes);
+app.use('/api', vehicleRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Velorenta API');
