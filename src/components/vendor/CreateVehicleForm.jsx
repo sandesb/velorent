@@ -86,10 +86,22 @@ useDropzone({
   };
 
   const handleSubmit = async () => {
-    console.log("Submitting Form Data:", formData);
-
+    const userId = localStorage.getItem("userId"); // Fetch userId from localStorage
+  
+    if (!userId) {
+      alert("User is not authenticated.");
+      return;
+    }
+  
+    const updatedFormData = {
+      ...formData,
+      user_id: userId, // Add user_id to the payload
+    };
+  
+    console.log("Submitting Form Data:", updatedFormData);
+  
     try {
-      const response = await vehiclesApi.addVehicle(formData);
+      const response = await vehiclesApi.addVehicle(updatedFormData);
       console.log("Vehicle added successfully:", response);
       alert("Vehicle added successfully!");
     } catch (error) {
@@ -97,6 +109,7 @@ useDropzone({
       alert("Failed to add vehicle. Please try again.");
     }
   };
+  
 
   return (
     <div className="w-full max-w-1xl mx-auto p-4">

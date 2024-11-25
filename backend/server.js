@@ -5,6 +5,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/userRoutes'); // Import user routes
 require('./db'); // Import and initialize database connection
 const vehicleRoutes = require('./routes/vehicleRoutes');
+const bookingsRoutes = require('./routes/bookingsRoutes'); // Import the bookings routes
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors({
 // Routes
 app.use('/api', userRoutes);
 app.use('/api', vehicleRoutes);
+app.use('/api', bookingsRoutes); // Prefix the bookings routes with '/api'
 
 
 app.get('/', (req, res) => {

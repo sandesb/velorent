@@ -22,6 +22,25 @@ const vehiclesApi = {
         .catch((error) => reject(error));
     });
   },
+
+  // Fetch vehicles by user_id
+  getVehiclesByUserId: (userId) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${BASE_URL}/${userId}`) // Use endpoint for user-specific vehicles
+        .then((response) => resolve(response.data))
+        .catch((error) => reject(error));
+    });
+  },
+
+  getVehiclesById: (id) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${BASE_URL}/details/${id}`) // Use endpoint for user-specific vehicles
+        .then((response) => resolve(response.data))
+        .catch((error) => reject(error));
+    });
+  },
 };
 
 export default vehiclesApi;

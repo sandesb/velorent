@@ -1,35 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Box, Text, Inset, Strong } from "@radix-ui/themes";
 import GridList from "./GridList";
+import vehiclesApi from "../../services/vehiclesApi";
+
 const DisplayVehicles = () => {
   const [isGridView, setIsGridView] = useState(true);
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const vehicles = [
-    {
-      id: 1,
-      title: "Luxury SUV",
-      price: "$99/day",
-      image:
-        "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80",
-      alt: "SUV",
-    },
-    {
-      id: 2,
-      title: "Economy Sedan",
-      price: "$49/day",
-      image:
-        "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80",
-      alt: "Sedan",
-    },
-    {
-      id: 3,
-      title: "Sports Car",
-      price: "$149/day",
-      image:
-        "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=600&q=80",
-      alt: "Sports Car",
-    },
-  ];
+  useEffect(() => {
+    const fetchUserVehicles = async () => {
+      const userId = localStorage.getItem("userId"); // Fetch userId from localStorage
+      if (!userId) {
+        alert("User is not authenticated.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await vehiclesApi.getVehiclesByUserId(userId); // Fetch user-specific vehicles
+        setVehicles(response.data);
+      } catch (error) {
+        console.error("Failed to fetch vehicles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserVehicles();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="mb-16">
@@ -43,15 +46,17 @@ const DisplayVehicles = () => {
         </button>
       </div>
 
-      {isGridView ? (
+      {vehicles.length === 0 ? (
+        <p>No vehicles found.</p>
+      ) : isGridView ? (
         <div className="grid md:grid-cols-3 gap-8">
           {vehicles.map((vehicle) => (
             <Box key={vehicle.id} maxWidth="240px" className="mx-auto">
               <Card size="2" className="rounded-lg overflow-hidden">
                 <Inset clip="padding-box" side="top" pb="current">
                   <img
-                    src={vehicle.image}
-                    alt={vehicle.alt}
+                    src={vehicle.photo}
+                    alt={vehicle.model}
                     style={{
                       display: "block",
                       objectFit: "cover",
@@ -62,9 +67,9 @@ const DisplayVehicles = () => {
                   />
                 </Inset>
                 <Text as="p" size="4" className="p-4">
-                  <Strong>{vehicle.title}</Strong>
+                  <Strong>{vehicle.model}</Strong>
                   <br />
-                  <span className="text-gray-600">{vehicle.price}</span>
+                  <span className="text-gray-600">${vehicle.rate_per_day}/day</span>
                 </Text>
                 <div className="p-4">
                   <button className="w-full py-2 bg-blue-600 text-white rounded-md">
@@ -81,6 +86,5 @@ const DisplayVehicles = () => {
     </div>
   );
 };
-
 
 export default DisplayVehicles;

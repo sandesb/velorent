@@ -1,13 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Checkbox from "@radix-ui/react-checkbox";
+import vehiclesApi from "../../services/vehiclesApi"; // Import the API service
 
 const FilterBox = ({ onFilter }) => {
   const [filters, setFilters] = useState({
     types: [],
-    priceRange: [0, 200],
     availability: [],
     vendor: [],
   });
+  const [filterOptions, setFilterOptions] = useState({
+    types: [], // Options for car types
+    availability: [], // Options for availability
+    vendor: [], // Options for vendors
+  });
+
+  // Fetch filter options from the backend
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        console.log("Fetching filter options...");
+        const response = await vehiclesApi.getVehicles(); // Fetch all vehicles
+        console.log("Fetched vehicles for filter options:", response.data);
+
+        // Extract unique filter options from the data
+        const uniqueTypes = [...new Set(response.data.map((v) => v.type))];
+        const uniqueAvailability = [
+          ...new Set(response.data.map((v) => v.availability_status)),
+        ];
+        const uniqueVendors = [...new Set(response.data.map((v) => v.vendor))];
+
+        setFilterOptions({
+          types: uniqueTypes,
+          availability: uniqueAvailability,
+          vendor: uniqueVendors,
+        });
+      } catch (error) {
+        console.error("Failed to fetch filter options:", error);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
 
   const toggleFilter = (category, value) => {
     setFilters((prev) => {
@@ -27,7 +60,6 @@ const FilterBox = ({ onFilter }) => {
   const resetFilters = () => {
     setFilters({
       types: [],
-      priceRange: [0, 200],
       availability: [],
       vendor: [],
     });
@@ -40,7 +72,7 @@ const FilterBox = ({ onFilter }) => {
       {/* Filter by Type */}
       <div className="mb-6">
         <h3 className="font-semibold mb-2">Car Type</h3>
-        {["Coupe", "Sedan", "SUV"].map((type) => (
+        {filterOptions.types.map((type) => (
           <div key={type} className="flex items-center space-x-2 mb-2">
             <Checkbox.Root
               id={`type-${type}`}
@@ -60,7 +92,7 @@ const FilterBox = ({ onFilter }) => {
       {/* Filter by Availability */}
       <div className="mb-6">
         <h3 className="font-semibold mb-2">Availability</h3>
-        {["Available", "Booked", "Maintenance"].map((status) => (
+        {filterOptions.availability.map((status) => (
           <div key={status} className="flex items-center space-x-2 mb-2">
             <Checkbox.Root
               id={`availability-${status}`}
@@ -77,25 +109,6 @@ const FilterBox = ({ onFilter }) => {
         ))}
       </div>
 
-      {/* Filter by Vendor */}
-      <div className="mb-6">
-        <h3 className="font-semibold mb-2">Vendor</h3>
-        {["Vendor A", "Vendor B"].map((vendor) => (
-          <div key={vendor} className="flex items-center space-x-2 mb-2">
-            <Checkbox.Root
-              id={`vendor-${vendor}`}
-              checked={filters.vendor.includes(vendor)}
-              onCheckedChange={() => toggleFilter("vendor", vendor)}
-              className="w-4 h-4 border border-gray-400 rounded-md flex justify-center items-center"
-            >
-              <Checkbox.Indicator className="bg-blue-600 w-3 h-3 rounded" />
-            </Checkbox.Root>
-            <label htmlFor={`vendor-${vendor}`} className="text-gray-700">
-              {vendor}
-            </label>
-          </div>
-        ))}
-      </div>
 
       {/* Actions */}
       <div className="flex justify-between">

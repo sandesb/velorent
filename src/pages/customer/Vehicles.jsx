@@ -1,66 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilterBox from "../../components/customer/FilterBox";
 import BookCard from "../../components/customer/BookCard";
-const vehicles = [
-  {
-    id: 1,
-    name: "Luxury SUV",
-    type: "SUV",
-    price: 99,
-    availability: "Available",
-    vendor: "Vendor A",
-    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
-  },
-  {
-    id: 2,
-    name: "Economy Sedan",
-    type: "Sedan",
-    price: 49,
-    availability: "Booked",
-    vendor: "Vendor B",
-    image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d",
-  },
-  {
-    id: 3,
-    name: "Sports Car",
-    type: "Coupe",
-    price: 149,
-    availability: "Maintenance",
-    vendor: "Vendor A",
-    image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a",
-  },
-];
+import vehiclesApi from "../../services/vehiclesApi"; // Import the API service for vehicles
 
 const Vehicles = () => {
-  const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
+  const [vehicles, setVehicles] = useState([]); // All vehicles fetched from the backend
+  const [filteredVehicles, setFilteredVehicles] = useState([]); // Vehicles filtered by filter criteria
+  const [loading, setLoading] = useState(true); // Loading state
 
+  // Fetch all vehicles from the backend when the component mounts
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        console.log("Fetching vehicles...");
+        const response = await vehiclesApi.getVehicles(); // Fetch vehicles from the backend
+        console.log("Fetched vehicles data:", response.data); // Debug log for fetched data
+        setVehicles(response.data); // Set fetched vehicles
+        setFilteredVehicles(response.data); // Initialize filtered vehicles with all fetched vehicles
+      } catch (error) {
+        console.error("Failed to fetch vehicles:", error); // Log fetch errors
+      } finally {
+        setLoading(false); // Stop loading once data is fetched
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
+  // Handle filtering logic
   const handleFilter = (filters) => {
-    const { types, availability, vendor } = filters;
+    console.log("Applying filters:", filters); // Debug log to inspect filters
+    const { types, availability } = filters;
 
     const filtered = vehicles.filter((vehicle) => {
-      const matchesType = types.length === 0 || types.includes(vehicle.type);
-      const matchesAvailability =
-        availability.length === 0 ||
-        availability.includes(vehicle.availability);
-      const matchesVendor = vendor.length === 0 || vendor.includes(vehicle.vendor);
+      // Safely access vehicle properties
+      const vehicleType = vehicle.type || ""; // Fallback to empty string if undefined
+      const vehicleAvailability = vehicle.availability_status || ""; // Fallback to empty string if undefined
 
-      return matchesType && matchesAvailability && matchesVendor;
+      const matchesType =
+        types.length === 0 || types.includes(vehicleType); // Match type filter
+      const matchesAvailability =
+        availability.length === 0 || availability.includes(vehicleAvailability); // Match availability filter
+
+      return matchesType && matchesAvailability; // Return true if all filters match
     });
 
-    setFilteredVehicles(filtered);
+    console.log("Filtered vehicles:", filtered); // Debug log to inspect filtered vehicles
+    setFilteredVehicles(filtered); // Update filtered vehicles
   };
 
+  if (loading) {
+    return <div>Loading vehicles...</div>; // Loading message
+  }
+
   return (
-    <div className="flex gap-4 p-4 ">
+    <div className="flex gap-4 p-4">
       <div className="w-64">
+        {/* Pass the filter handler to the FilterBox */}
         <FilterBox onFilter={handleFilter} />
       </div>
       <div className="flex-1">
         <h2 className="text-3xl font-bold mb-6">Featured Vehicles</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVehicles.map((vehicle) => (
-            <BookCard key={vehicle.id} vehicle={vehicle} />
-          ))}
+          {filteredVehicles.length > 0 ? (
+            filteredVehicles.map((vehicle) => (
+              <BookCard key={vehicle.id} vehicle={vehicle} />
+            ))
+          ) : (
+            <p>No vehicles match the selected filters.</p> // Show message if no vehicles match the filter
+          )}
         </div>
       </div>
     </div>
