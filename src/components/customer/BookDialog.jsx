@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { CrossIcon, CreditCardIcon } from "lucide-react";
 import vehiclesApi from "../../services/vehiclesApi"; // Import the API service
 import bookingsApi from "../../services/bookingsApi"; // Import the bookings API service
-
+import { showSuccessToast } from "../../utils/toastUtils";
 const BookDialog = ({ vehicle, onBookNow }) => {
   const [durationType, setDurationType] = useState("Days");
   const [number, setNumber] = useState(1);
@@ -34,7 +34,7 @@ const BookDialog = ({ vehicle, onBookNow }) => {
     if (rent !== null) {
       const userId = localStorage.getItem("userId"); // Assuming userId is stored in localStorage
       const currentDate = new Date().toISOString().split("T")[0]; // Format date as 'YYYY-MM-DD'
-
+  
       const bookingData = {
         id: crypto.randomUUID(), // Generate a unique ID for the booking
         vehicle: vehicle.model, // Vehicle model from the data
@@ -46,13 +46,16 @@ const BookDialog = ({ vehicle, onBookNow }) => {
         date: currentDate, // Current date
         vendor: vehicle.user_id, // Vendor from the vehicle data
       };
-
+  
       console.log("Booking Data to Submit:", bookingData);
-
+  
       try {
         const response = await bookingsApi.addBooking(bookingData); // Send booking data to API
         console.log("Booking Response:", response);
-
+  
+        // Show success toast
+        showSuccessToast("Booking Successful. Please Pay Your Rent.");
+  
         // Navigate to the Payment page with booking details
         navigate("/dashboard/payment", {
           state: {

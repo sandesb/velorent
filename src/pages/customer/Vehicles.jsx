@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast"; // Import react-hot-toast
 import FilterBox from "../../components/customer/FilterBox";
 import BookCard from "../../components/customer/BookCard";
 import vehiclesApi from "../../services/vehiclesApi"; // Import the API service for vehicles
@@ -47,6 +48,21 @@ const Vehicles = () => {
 
     console.log("Filtered vehicles:", filtered); // Debug log to inspect filtered vehicles
     setFilteredVehicles(filtered); // Update filtered vehicles
+
+    // Generate and show dynamic toast message
+    const appliedFilters = [];
+    if (types.length > 0) appliedFilters.push(`Type: ${types.join(", ")}`);
+    if (availability.length > 0)
+      appliedFilters.push(`Availability: ${availability.join(", ")}`);
+
+    const filterMessage =
+      appliedFilters.length > 0
+        ? `${appliedFilters.join(" | ")} filters applied`
+        : "No filters applied";
+    toast.success(filterMessage, {
+      duration: 4000,
+      position: "top-right",
+    });
   };
 
   if (loading) {

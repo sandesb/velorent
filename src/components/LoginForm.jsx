@@ -3,6 +3,7 @@ import * as Form from "@radix-ui/react-form";
 import { Text, Flex, Switch } from "@radix-ui/themes";
 import { useLocation, useNavigate } from "react-router-dom";
 import usersApi from "../services/usersApi";
+import { showSuccessToast } from "../utils/toastUtils"; // Adjust path as necessary
 
 const LoginForm = () => {
   const [isVendor, setIsVendor] = useState(null); // Vendor state: true/false/null
@@ -30,12 +31,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (isVendor === null) {
       alert("Please select Vendor or Customer.");
       return;
     }
-
+  
     try {
       const response = await usersApi.login(
         formData.email,
@@ -43,15 +44,18 @@ const LoginForm = () => {
         isVendor // Pass boolean role
       );
       console.log("Login successful:", response);
-
+  
       const { id, full_name, email } = response.user;
-
+  
       // Store user details in localStorage
       localStorage.setItem("role", isVendor ? "Vendor" : "Customer");
       localStorage.setItem("fullName", full_name);
       localStorage.setItem("userId", id);
       localStorage.setItem("email", email);
-
+  
+      // Show success toast
+      showSuccessToast("Login successful!");
+  
       // Navigate to the appropriate dashboard
       if (isVendor) {
         navigate("/vendor");

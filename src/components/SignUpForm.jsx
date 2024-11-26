@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as Form from "@radix-ui/react-form";
 import AlertPopup from "./AlertPopup";
 import usersApi from "../services/usersApi";
+import { showSuccessToast } from "../utils/toastUtils";
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
     full_name: "",
@@ -53,7 +54,12 @@ const SignUpForm = () => {
         try {
           const response = await usersApi.signUp(userData);
           console.log("User signed up successfully:", response);
-          navigate("/login"); // Redirect to login page on success
+
+          // Show success toast
+          showSuccessToast("User Created Successfully. Please Sign In.");
+
+          // Redirect to login page on success
+          navigate("/login");
         } catch (error) {
           console.error("Sign-up failed:", error);
         }

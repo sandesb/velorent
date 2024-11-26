@@ -12,12 +12,18 @@ import Vehicles from './pages/customer/Vehicles';
 import Profile from './pages/customer/Profile';
 import BookTable from './components/customer/BookTable';
 import Payment from './pages/Payment';
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   return (
     <Router>
+        <Toaster/>
+
       <Routes>
         {/* Root Route */}
+
         <Route path="/" element={<LandingPage />} />
+
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminLogin />} />

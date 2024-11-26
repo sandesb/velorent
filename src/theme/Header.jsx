@@ -1,6 +1,7 @@
 import React from "react";
 import { BellIcon } from "lucide-react"; // Import BellIcon for notifications
 import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toastUtils"; // Import success toast utility
 import Logo from "../assets/logo.png"; // Import the logo from the assets folder
 
 const Header = () => {
@@ -47,6 +48,10 @@ const Header = () => {
                 onClick={() => {
                   // Clear the role key from localStorage
                   localStorage.removeItem("role");
+
+                  // Show success toast message
+                  showSuccessToast("You have been logged out.");
+
                   console.log("Logged out");
                   navigate("/"); // Redirect to home or login page
                 }}
@@ -77,4 +82,3 @@ const Header = () => {
 };
 
 export default Header;
-``
