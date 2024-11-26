@@ -62,15 +62,24 @@ const BookTable = () => {
   
     fetchData();
   }, [loginType, userId]);
-  
-  
-  
-  
 
   // Handle row click to open dialog
   const handleRowClick = (booking) => {
-    setSelectedBooking(booking);
+    // Map booking properties to match BookList expectations
+    const transformedBooking = {
+      vehicleName: booking.vehicle,
+      pricePerDay: booking.price_per_day,
+      duration: booking.duration,
+      durationType: "days", // Assuming duration type is days; adjust as needed
+      pickupLocation: booking.pick_up,
+      totalRent: booking.total_rent, // Calculate total rent
+      vendor: booking.vendorName, // Vendor name
+      customer: booking.customerName, // Customer name
+      date: booking.date,
+    };
+    setSelectedBooking(transformedBooking);
   };
+  
 
   // Dynamic table header
   const dynamicHeader = loginType === "Customer" ? "Vendor" : "Customer";

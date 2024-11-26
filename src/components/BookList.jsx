@@ -19,7 +19,7 @@ const BookList = ({ booking }) => {
       <DataList.Item>
         <DataList.Label minWidth="88px">Duration</DataList.Label>
         <DataList.Value>
-          {booking.duration} {booking.durationType}
+          {booking.duration}
         </DataList.Value>
       </DataList.Item>
       <DataList.Item>
