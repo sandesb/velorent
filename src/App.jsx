@@ -13,6 +13,7 @@ import Profile from './pages/customer/Profile';
 import BookTable from './components/customer/BookTable';
 import Payment from './pages/Payment';
 import { Toaster } from 'react-hot-toast';
+import Admin from './pages/Admin';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<Admin />} />
+
         <Route path="/vehicle" element={<CreateVehicleForm />} />
         <Route path="/display" element={<DisplayVehicles />} />
 

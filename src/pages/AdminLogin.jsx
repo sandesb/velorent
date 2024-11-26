@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Flex } from "@radix-ui/themes";
-import LoginForm from "../components/LoginForm";
+import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toastUtils";
 
 const AdminLogin = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Check credentials
+    if (username === "admin" && password === "admin") {
+      // Save admin role to localStorage
+      localStorage.setItem("role", "Admin");
+
+      // Show success toast
+      showSuccessToast("Login successful!");
+
+      // Redirect to admin dashboard
+      navigate("/admin-dashboard");
+    } else {
+      alert("Invalid username or password. Please try again.");
+    }
+  };
+
   return (
     <Flex
       height="100vh"
@@ -26,7 +49,7 @@ const AdminLogin = () => {
         >
           Welcome, Master.
         </h1>
-        <p className="text-gray-600 ">
+        <p className="text-gray-600">
           Log in to your account.
         </p>
 
@@ -35,8 +58,51 @@ const AdminLogin = () => {
           <div className="border-t border-gray-300 flex-grow"></div>
         </div>
 
-        {/* Include LoginForm */}
-        <LoginForm />
+        {/* Inline Login Form */}
+        <form className="w-[260px] mb-52" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-gray-900 text-sm font-medium mb-2"
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="box-border inline-flex h-[35px] w-full appearance-none items-center justify-center rounded bg-gray-100 px-2.5 text-[15px] leading-none text-gray-900 shadow-sm outline-none focus:shadow-md"
+              required
+            />
+          </div>
+
+          <div className="mb-6">
+            <label
+              htmlFor="password"
+              className="block text-gray-900 text-sm font-medium mb-2"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="box-border inline-flex h-[35px] w-full appearance-none items-center justify-center rounded bg-gray-100 px-2.5 text-[15px] leading-none text-gray-900 shadow-sm outline-none focus:shadow-md"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500"
+          >
+            Log In
+          </button>
+        </form>
       </Flex>
 
       {/* Right Section */}
