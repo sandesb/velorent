@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom"; // Import useLocation
 import { SearchIcon } from "lucide-react";
 import { Container } from "@radix-ui/themes";
-import VehicleCard from "../components/customer/VehicleCard";
+import BookCard from "../components/customer/BookCard"; // Import BookCard
 import DisplayVehicles from "../components/vendor/DisplayVehicles"; // Import DisplayVehicles
 import vehiclesApi from "../services/vehiclesApi"; // Import the API service
 
@@ -11,6 +11,8 @@ const Dashboard = () => {
   const isVendor = location.pathname.includes("/vendor"); // Check if the path includes '/vendor'
 
   const [vehicles, setVehicles] = useState([]); // State to store vehicle data
+  const [filteredVehicles, setFilteredVehicles] = useState([]); // State for filtered vehicles
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
@@ -21,6 +23,7 @@ const Dashboard = () => {
         const data = await vehiclesApi.getVehicles();
         console.log("Fetched vehicles:", data); // Log the data for debugging
         setVehicles(data.data || []); // Set the fetched vehicles
+        setFilteredVehicles(data.data || []); // Initialize filtered vehicles
         setLoading(false); // Update loading state
       } catch (err) {
         console.error("Failed to fetch vehicles:", err);
@@ -31,6 +34,23 @@ const Dashboard = () => {
 
     fetchVehicles();
   }, []);
+
+  // Handle search query change
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      // If the search query is empty, reset filtered vehicles
+      setFilteredVehicles(vehicles);
+    } else {
+      // Filter vehicles based on the query
+      const filtered = vehicles.filter((vehicle) =>
+        vehicle.model.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredVehicles(filtered);
+    }
+  };
 
   return (
     <Container size="3">
@@ -50,11 +70,10 @@ const Dashboard = () => {
                   <input
                     type="text"
                     placeholder="Search for vehicles..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
                     className="flex-1 p-2 outline-none"
                   />
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-md">
-                    Search
-                  </button>
                 </div>
               </>
             )}
@@ -76,19 +95,17 @@ const Dashboard = () => {
               {error && <p className="text-center text-red-500">{error}</p>}
 
               {/* Show Vehicles */}
-              {!loading && !error && vehicles.length > 0 ? (
+              {!loading && !error && filteredVehicles.length > 0 ? (
                 <div className="grid md:grid-cols-3 gap-8">
-                  {vehicles.map((vehicle) => (
-                    <VehicleCard
+                  {filteredVehicles.map((vehicle) => (
+                    <BookCard
                       key={vehicle.id}
-                      imageSrc={vehicle.photo || "https://via.placeholder.com/300"}
-                      title={vehicle.model || "Unknown Model"}
-                      price={`$${vehicle.rate_per_day}/day`}
+                      vehicle={vehicle} // Pass the vehicle object directly
                     />
                   ))}
                 </div>
               ) : (
-                !loading && <p className="text-center">No vehicles available.</p>
+                !loading && <p className="text-center">No vehicles match your search.</p>
               )}
             </div>
           )}

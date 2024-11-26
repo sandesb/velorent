@@ -76,17 +76,7 @@ const LandingPage = () => {
             <p className="text-xl text-gray-600 mb-8">
               Choose from our wide selection of vehicles for any occasion
             </p>
-            <div className="max-w-2xl mx-auto flex items-center bg-white rounded-lg shadow-md p-2">
-              <SearchIcon className="h-5 w-5 text-gray-400 mx-2" />
-              <input
-                type="text"
-                placeholder="Search for vehicles..."
-                className="flex-1 p-2 outline-none"
-              />
-              <button className="px-6 py-2 bg-blue-400 text-white rounded-md">
-                Search
-              </button>
-            </div>
+
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
@@ -110,7 +100,7 @@ const LandingPage = () => {
           </div>
 
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8">
+            <h2 className="text-3xl font-bold text-blue-400 text-center mb-8">
               Featured Vehicles
             </h2>
             {/* Replace inline code with the Card component */}

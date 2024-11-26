@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Skeleton } from "@radix-ui/themes";
+import { showFailureToast } from "../utils/toastUtils"; // Import failure toast utility
 
 const Card = ({ vehicle }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -14,6 +15,15 @@ const Card = ({ vehicle }) => {
     }, 5000);
     return () => clearTimeout(timer);
   }, [isImageLoaded]);
+
+  const handleBookNow = () => {
+    const isLoggedIn = localStorage.getItem("role"); // Check if the user is logged in
+    if (!isLoggedIn) {
+      showFailureToast("Please Log In First"); // Trigger failure toast
+    } else {
+      console.log("Proceed to booking process..."); // Replace with booking logic
+    }
+  };
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-md bg-white">
@@ -57,7 +67,10 @@ const Card = ({ vehicle }) => {
           <>
             <h3 className="font-semibold text-lg mb-2">{vehicle.name}</h3>
             <p className="text-gray-600 mb-4">${vehicle.price}/day</p>
-            <button className="w-full py-2 bg-blue-600 text-white rounded-md">
+            <button
+              className="w-full py-2 bg-blue-600 text-white rounded-md"
+              onClick={handleBookNow}
+            >
               Book Now
             </button>
           </>
